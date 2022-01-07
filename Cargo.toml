@@ -2,6 +2,8 @@
 name = "squirtle"
 version = "0.1.0"
 edition = "2021"
+description = "A CLI for playing the wordle"
+repository = "https://github.com/szunami/squirtle"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

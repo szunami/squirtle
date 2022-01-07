@@ -11,6 +11,12 @@ you should input mnmym (m means "move", n means "no", y means "yes"). This is a 
 
 This repo includes a word list derived from Webster's dictionary.
 
+## Strategy
+
+The high level idea is to narrow the search space as much as possible with each guess.
+
+Given information about past guesses, squirtle filters down the set of all words to the set of all viable words. It then measures the frequency of letters in the viable word set. It then guesses a viable word whose letters appear in the highest number of viable words. This is a simple heuristic that seems to work pretty well in practice.
+
 ## Performance
 
-On a blank board, this word list includes 5379 words. In one run, after 1 guess, this was reduced to 158 viable words. After 2 guesses, this was reduced to 9 viable words. It got the right word on the third guess.
+On a blank board, the viable word list includes 5379 words. In one sample run, after 1 guess (squirtle suggests "AROSE" as a good first guess), this was reduced to 158 viable words. After 2 guesses, this was reduced to 9 viable words. It got the right word on the third guess.

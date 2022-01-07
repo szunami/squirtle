@@ -1,75 +1,10 @@
 use std::{
     collections::{HashMap, HashSet},
-    error::Error,
     fs::File,
     io,
 };
 
-enum Constraint {
-    Green(char, usize),
-    Yellow(char, usize),
-    Grey(char),
-}
-
-fn match_constraint(word: &str, constraint: &Constraint) -> bool {
-    match constraint {
-        Constraint::Green(constraint_char, constraint_index) => {
-            for (index, letter) in word.chars().enumerate() {
-                if index != *constraint_index {
-                    continue;
-                }
-                return *constraint_char == letter;
-            }
-            return false;
-        }
-        Constraint::Yellow(constraint_char, constraint_index) => {
-            let mut contains = false;
-            for (index, letter) in word.chars().enumerate() {
-                if index != *constraint_index {
-                    if letter == *constraint_char {
-                        contains = true;
-                    }
-                }
-                if index == *constraint_index {
-                    if letter == *constraint_char {
-                        return false;
-                    }
-                }
-            }
-            return contains;
-        }
-        Constraint::Grey(constraint_char) => {
-            for char in word.chars() {
-                if *constraint_char == char {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-}
-
-fn matches(word: &str, constraints: &Vec<Constraint>) -> bool {
-    for constraint in constraints {
-        if !match_constraint(word, constraint) {
-            return false;
-        }
-    }
-    true
-}
-
 fn main() {
-    println!("Guess the number!");
-    println!("Please input your guess.");
-
-    /*
-    - load list of words
-    - parse constraints
-    - apply constraints to list
-    - count frequencies in list
-    - new best guess
-    */
-
     let words = File::open("data/websters.json").unwrap();
     let words: Vec<String> = serde_json::from_reader::<File, Vec<String>>(words).unwrap();
 
@@ -119,7 +54,56 @@ fn main() {
     }
 }
 
-fn find_best_guess(words: &Vec<String>) -> Option<String> {
+enum Constraint {
+    Green(char, usize),
+    Yellow(char, usize),
+    Grey(char),
+}
+
+fn match_constraint(word: &str, constraint: &Constraint) -> bool {
+    match constraint {
+        Constraint::Green(constraint_char, constraint_index) => {
+            for (index, letter) in word.chars().enumerate() {
+                if index != *constraint_index {
+                    continue;
+                }
+                return *constraint_char == letter;
+            }
+            false
+        }
+        Constraint::Yellow(constraint_char, constraint_index) => {
+            let mut contains = false;
+            for (index, letter) in word.chars().enumerate() {
+                if index != *constraint_index && letter == *constraint_char {
+                    contains = true;
+                }
+                if index == *constraint_index && letter == *constraint_char {
+                    return false;
+                }
+            }
+            contains
+        }
+        Constraint::Grey(constraint_char) => {
+            for char in word.chars() {
+                if *constraint_char == char {
+                    return false;
+                }
+            }
+            true
+        }
+    }
+}
+
+fn matches(word: &str, constraints: &[Constraint]) -> bool {
+    for constraint in constraints {
+        if !match_constraint(word, constraint) {
+            return false;
+        }
+    }
+    true
+}
+
+fn find_best_guess(words: &[String]) -> Option<String> {
     // build frequency map
     let mut char_frequencies = HashMap::new();
     for word in words {
@@ -174,7 +158,7 @@ fn parse_constraints(guess: &str, result: &str) -> Result<Vec<Constraint>, Parse
         }
     }
 
-    return Ok(constraints);
+    Ok(constraints)
 }
 
 #[derive(Debug, Clone)]

@@ -5,7 +5,7 @@ use std::{
 };
 
 fn main() {
-    let words = File::open("data/websters.json").unwrap();
+    let words = File::open("data/wordle.json").unwrap();
     let words: Vec<String> = serde_json::from_reader::<File, Vec<String>>(words).unwrap();
 
     let mut viable_words: Vec<String> = words.iter().filter(|x| x.len() == 5).cloned().collect();
